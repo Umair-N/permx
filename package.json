@@ -1,6 +1,6 @@
 {
   "name": "@permx/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Structured RBAC with permission keys, role inheritance, UI mappings, and feature flags",
   "license": "MIT",
   "type": "module",
