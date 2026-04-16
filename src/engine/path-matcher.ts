@@ -1,8 +1,6 @@
 /**
  * Match a URL path against a pattern with :param placeholders.
  *
- * Ported from Sahal's `match_path_pattern` in authorize.logic.ts
- * and `matchPathPattern` in proxy-authorize.middleware.ts (merged, deduplicated).
  *
  * @example
  * matchPathPattern('/clients/:id', '/clients/123')        // true

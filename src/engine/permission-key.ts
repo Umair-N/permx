@@ -14,7 +14,6 @@ export interface BuildDerivedKeyParams {
  * Format: `{module}.{resource}:{field}.{action}.{scope}`
  * - field segment is optional: `{module}.{resource}.{action}.{scope}`
  *
- * Ported from Sahal's `build_derived_key` in permission.model.ts
  *
  * @example
  * buildDerivedKey({ module: 'people', resource: 'employees', action: 'view', scope: 'own', field: 'salary' })

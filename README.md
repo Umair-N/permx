@@ -67,15 +67,16 @@ const auth = createPermXMiddleware(permx, {
   extractUserId: (req) => req.user?.id,
 });
 
-app.get('/clients', auth.authorize('clients.clients.view.all'), getClients);
-app.post('/clients', auth.authorize('clients.clients.create.all'), createClient);
+app.get('/projects', auth.authorize('projects.tasks.view.all'), listProjects);
+app.post('/projects', auth.authorize('projects.tasks.create.all'), createProject);
+app.delete('/users/:id', auth.authorize('admin.users.delete.all'), deleteUser);
 ```
 
 ### 4. Check Permissions
 
 ```typescript
 // Direct check
-const result = await permx.authorize(userId, 'clients.clients.view.all');
+const result = await permx.authorize(userId, 'projects.tasks.view.all');
 // → { authorized: true }
 
 // Get all effective permissions (for frontend)
@@ -92,17 +93,18 @@ Permissions follow the format: `{module}.{resource}:{field}.{action}.{scope}`
 ```typescript
 import { buildDerivedKey, parsePermissionKey } from '@permx/core';
 
+// Field-level access control: only certain roles can see revenue data
 buildDerivedKey({
-  module: 'people',
-  resource: 'employees',
+  module: 'analytics',
+  resource: 'reports',
   action: 'view',
   scope: 'own',
-  field: 'salary',
+  field: 'revenue',
 });
-// → "people.employees:salary.view.own"
+// → "analytics.reports:revenue.view.own"
 
-parsePermissionKey('people.employees:salary.view.own');
-// → { module: 'people', resource: 'employees', field: 'salary', action: 'view', scope: 'own' }
+parsePermissionKey('analytics.reports:revenue.view.own');
+// → { module: 'analytics', resource: 'reports', field: 'revenue', action: 'view', scope: 'own' }
 ```
 
 **Actions**: `view`, `create`, `update`, `delete`, `manage`
@@ -113,11 +115,11 @@ parsePermissionKey('people.employees:salary.view.own');
 Roles can inherit permissions from parent roles. PermX uses DFS with diamond and cycle protection:
 
 ```
-Admin (manages everything)
-  └── Manager (inherits Admin's view permissions)
-        ├── Team Lead (inherits Manager)
-        └── Project Lead (inherits Manager)
-              └── Member (inherits from both leads — diamond handled)
+Owner (full access)
+  └── Admin (inherits Owner's management permissions)
+        ├── Editor (inherits Admin — can edit content)
+        └── Billing Manager (inherits Admin — can manage payments)
+              └── Viewer (inherits from both — diamond handled)
 ```
 
 ### UI Mappings
@@ -125,20 +127,20 @@ Admin (manages everything)
 Each permission can map to routes, components, and fields — enabling frontend gating without hardcoding access rules in your UI:
 
 ```typescript
-// Permission "clients.clients.view.all" maps to:
+// Permission "billing.invoices.view.all" maps to:
 {
   ui_mappings: [
-    { type: 'route', identifier: '/clients' },
-    { type: 'component', identifier: 'client-list-table' },
-    { type: 'field', identifier: 'client-revenue' },
+    { type: 'route', identifier: '/billing' },
+    { type: 'component', identifier: 'invoice-table' },
+    { type: 'field', identifier: 'payment-amount' },
   ]
 }
 
 // Frontend receives pre-computed arrays:
 const perms = await permx.getUserPermissions(userId);
-perms.ui_mappings.routes;     // ['/clients', '/dashboard']
-perms.ui_mappings.components; // ['client-list-table', 'export-btn']
-perms.ui_mappings.fields;     // ['client-revenue', 'salary']
+perms.ui_mappings.routes;     // ['/billing', '/dashboard', '/settings']
+perms.ui_mappings.components; // ['invoice-table', 'export-btn', 'user-list']
+perms.ui_mappings.fields;     // ['payment-amount', 'api-key', 'revenue']
 ```
 
 ### Three-Layer Permission Model
@@ -152,6 +154,11 @@ Regular Roles:    Job-function access (per-user assignment)
 Subscription:     Tenant plan features (per-tenant, shared by all users)
 Feature Flags:    Gradual rollout capabilities (per-tenant)
 ```
+
+**Example**: A user with the "Editor" role on the "Pro" plan gets:
+- Editor permissions (create/update posts, manage media)
+- Pro plan features (analytics dashboard, API access, custom domains)
+- Feature flags (beta AI assistant, new editor UI)
 
 ## Entry Points
 
@@ -264,10 +271,10 @@ const permx = createPermX({
     exemptModels: ['module', 'permission'],      // global (not per-tenant)
   },
 
-  // Optional: subscription-based feature flags (SaaS)
+  // Optional: subscription-based permissions (SaaS)
   subscriptionResolver: async (tenantId) => {
-    const customer = await MyCustomerModel.findById(tenantId);
-    return customer?.subscriptionPermissionIds ?? [];
+    const tenant = await TenantModel.findById(tenantId);
+    return tenant?.planPermissionIds ?? [];
   },
 
   // Optional: super-admin bypass
@@ -313,10 +320,11 @@ const auth = createPermXMiddleware(permx, {
 });
 
 // Per-route authorization
-router.get('/clients', auth.authorize('clients.clients.view.all'), handler);
+router.get('/projects', auth.authorize('projects.tasks.view.all'), handler);
+router.post('/billing/invoices', auth.authorize('billing.invoices.create.all'), handler);
 
 // Gateway-style API mapping authorization
-router.use(auth.authorizeApi('client-hq'));
+router.use(auth.authorizeApi('project-service'));
 ```
 
 ## Framework-Agnostic Authorization
@@ -340,7 +348,7 @@ const request: AuthorizationRequest = {
 };
 
 // 2. Call the handler
-const outcome = await handleAuthorization(permx, request, 'clients.view.all');
+const outcome = await handleAuthorization(permx, request, 'projects.tasks.view.all');
 
 // 3. Map the outcome to your framework's response
 if (outcome.action === 'allow')  { /* next() */ }
@@ -384,7 +392,7 @@ const permx = createPermXCore(new PrismaDataProvider(), {
 └── permx.ts         createPermXCore() factory
 
 @permx/core/mongoose (peer: mongoose)
-├── schemas.ts       Schema factory (Better-Auth pattern)
+├── schemas.ts       Schema factory with plugin support
 ├── data-provider.ts MongooseDataProvider implements PermXDataProvider
 ├── factory.ts       createPermX() wires schemas + provider + core
 └── tenant-plugin.ts Lightweight opt-in tenant isolation
@@ -413,11 +421,6 @@ bun run typecheck
 
 # Validate package exports
 bun run lint
-
-# Run TypeScript directly
-bun examples/smoke.ts
-# or with tsx:
-npx tsx examples/smoke.ts
 ```
 
 ## License

@@ -55,8 +55,7 @@ interface ModuleDocument {
 /**
  * Mongoose implementation of PermXDataProvider.
  *
- * Wraps the PermX Mongoose models with the query patterns from
- * Sahal's operation files, decoupled from tenant context and AppError.
+ * Wraps the PermX Mongoose models with optimized query patterns.
  */
 export class MongooseDataProvider implements PermXDataProvider {
   constructor(private readonly models: PermXModels) {}

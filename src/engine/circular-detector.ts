@@ -1,8 +1,7 @@
 /**
  * Detects circular inheritance in role hierarchies.
  *
- * Ported from Sahal's `detect_circular_inheritance` in role.operation.ts
- * Decoupled from Mongoose — accepts a `fetchParents` callback.
+ * Database-agnostic — accepts a `fetchParents` callback.
  */
 
 export type FetchParentsFn = (roleId: string) => Promise<string[]>;

@@ -15,8 +15,7 @@ import { resolveRolePermissions } from './role-resolver.js';
  * - excluded_permissions: keys removed from the effective set
  * - additional_permissions: IDs added to the effective set
  *
- * Ported from Sahal's `get_user_effective_permissions` in user-role.logic.ts
- * Decoupled from all Mongoose models — uses PermXDataProvider interface.
+ * Database-agnostic — uses PermXDataProvider interface.
  */
 export async function getUserEffectivePermissions(
   userId: string,

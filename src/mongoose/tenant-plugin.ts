@@ -12,8 +12,7 @@ export interface TenantPluginOptions {
  * find/count/update/delete queries by tenantId. The consumer sets tenantId
  * on each document at creation time.
  *
- * Replaces Sahal's `@iqsahal/tenant` with a simpler, explicit approach:
- * no AsyncLocalStorage — tenantId is passed explicitly via the document or query.
+ * No AsyncLocalStorage — tenantId is passed explicitly via the document or query.
  */
 export function tenantPlugin(schema: Schema, options: TenantPluginOptions = {}): void {
   const field_name = options.tenantIdField ?? 'tenantId';

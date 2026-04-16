@@ -7,8 +7,7 @@ import { CircularInheritanceError } from '../errors.js';
  * Uses a visited set to handle diamond inheritance without duplicates
  * and prevent infinite loops from circular inheritance.
  *
- * Ported from Sahal's `resolve_role_permissions` in role.logic.ts
- * Decoupled from Mongoose — accepts a `fetchRole` callback.
+ * Database-agnostic — accepts a `fetchRole` callback.
  */
 
 export type FetchRoleFn = (roleId: string) => Promise<{
