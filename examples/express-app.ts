@@ -18,6 +18,7 @@ import express from 'express';
 import { createPermX } from '../src/mongoose/factory.js';
 import { createPermXMiddleware } from '../src/middleware/authorize.js';
 
+async function main() {
   // ── 1. Connect to MongoDB ───────────────────────────────
   await mongoose.connect('mongodb://localhost:27017/permx-example');
   console.log('Connected to MongoDB');
