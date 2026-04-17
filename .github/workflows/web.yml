@@ -1,0 +1,41 @@
+name: Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/core/**'
+      - 'packages/react/**'
+      - '.github/workflows/web.yml'
+      - 'bun.lock'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/core/**'
+      - 'packages/react/**'
+      - '.github/workflows/web.yml'
+      - 'bun.lock'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build workspace libs
+        run: bun run build:core && bun run build:react
+
+      - name: Type check web
+        run: bun run web:typecheck
+
+      - name: Build web
+        run: bun run web:build

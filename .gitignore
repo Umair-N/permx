@@ -5,3 +5,11 @@ coverage/
 .DS_Store
 .env
 .env.*
+CLAUDE.md
+
+# app build artifacts
+apps/*/.output/
+apps/*/.vinxi/
+apps/*/.tanstack/
+apps/*/.vercel/
+apps/*/.netlify/

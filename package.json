@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "bun --filter '@permx/core' build && bun --filter '@permx/react' build && bun --filter '@permx/prisma' build",
@@ -16,7 +17,10 @@
     "build:prisma": "bun --filter '@permx/prisma' build",
     "test:core": "bun --filter '@permx/core' test",
     "test:react": "bun --filter '@permx/react' test",
-    "test:prisma": "bun --filter '@permx/prisma' test"
+    "test:prisma": "bun --filter '@permx/prisma' test",
+    "web:dev": "bun --filter '@permx/web' dev",
+    "web:build": "bun --filter '@permx/web' build",
+    "web:typecheck": "bun --filter '@permx/web' typecheck"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
