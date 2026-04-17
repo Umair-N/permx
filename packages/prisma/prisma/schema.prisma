@@ -1,0 +1,152 @@
+// PermX RBAC — Prisma schema
+//
+// This is a REFERENCE schema. Copy the models below into your own
+// `schema.prisma`, adjust table names / datasource as needed, and run
+// `prisma migrate dev`. The model names (PermXModule, PermXPermission, ...)
+// can be renamed via `@@map` if you prefer `acl_modules` etc.
+//
+// Datasource block is commented out — use your own.
+// Tested with: PostgreSQL, MySQL, SQLite.
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+//
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+model PermXModule {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  icon        String?
+  sortOrder   Int      @default(0) @map("sort_order")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  permissions PermXPermission[]
+
+  @@map("permx_modules")
+}
+
+model PermXPermission {
+  id          String   @id @default(cuid())
+  moduleId    String   @map("module_id")
+  name        String
+  key         String   @unique
+  description String?
+
+  // Structured-key components (optional, for derived keys)
+  resource String?
+  action   String?
+  scope    String?
+  field    String?
+
+  // JSON-encoded ApiMapping[] and UiMapping[] for cross-DB portability.
+  // Use `Json?` on databases that support it (Postgres, MySQL); on SQLite
+  // this becomes plain `String?` containing JSON.
+  apiMappings String? @map("api_mappings")
+  uiMappings  String? @map("ui_mappings")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  module          PermXModule          @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  rolePermissions PermXRolePermission[]
+  roleInclusions  PermXUserRoleAdditional[]
+  roleExclusions  PermXUserRoleExcluded[]
+
+  @@index([moduleId])
+  @@map("permx_permissions")
+}
+
+model PermXRole {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String?
+  roleType     String   @default("regular") @map("role_type")
+  isSystemRole Boolean  @default(false) @map("is_system_role")
+  active       Boolean  @default(true)
+  expiresAt    DateTime? @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  permissions  PermXRolePermission[]
+  parents      PermXRoleInheritance[] @relation("child")
+  children     PermXRoleInheritance[] @relation("parent")
+  userRoles    PermXUserRole[]
+
+  @@map("permx_roles")
+}
+
+/// Many-to-many: Role ↔ Permission
+model PermXRolePermission {
+  roleId       String @map("role_id")
+  permissionId String @map("permission_id")
+
+  role       PermXRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission PermXPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("permx_role_permissions")
+}
+
+/// Self-join: Role inherits from Role
+model PermXRoleInheritance {
+  childId  String @map("child_id")
+  parentId String @map("parent_id")
+
+  child  PermXRole @relation("child",  fields: [childId],  references: [id], onDelete: Cascade)
+  parent PermXRole @relation("parent", fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@id([childId, parentId])
+  @@index([parentId])
+  @@map("permx_role_inheritance")
+}
+
+model PermXUserRole {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  roleId     String   @map("role_id")
+  tenantId   String?  @map("tenant_id")
+  assignedBy String?  @map("assigned_by")
+  assignedAt DateTime @default(now()) @map("assigned_at")
+  expiresAt  DateTime? @map("expires_at")
+
+  role                    PermXRole                 @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  additionalPermissions   PermXUserRoleAdditional[]
+  excludedPermissions     PermXUserRoleExcluded[]
+
+  @@unique([userId, roleId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+  @@map("permx_user_roles")
+}
+
+model PermXUserRoleAdditional {
+  userRoleId   String @map("user_role_id")
+  permissionId String @map("permission_id")
+
+  userRole   PermXUserRole   @relation(fields: [userRoleId],   references: [id], onDelete: Cascade)
+  permission PermXPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([userRoleId, permissionId])
+  @@map("permx_user_role_additional")
+}
+
+model PermXUserRoleExcluded {
+  userRoleId   String @map("user_role_id")
+  permissionId String @map("permission_id")
+
+  userRole   PermXUserRole   @relation(fields: [userRoleId],   references: [id], onDelete: Cascade)
+  permission PermXPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([userRoleId, permissionId])
+  @@map("permx_user_role_excluded")
+}

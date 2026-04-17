@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [@permx/prisma 0.1.0] - 2026-04-17
+
+### Added
+
+- **New package `@permx/prisma`** — Prisma adapter for PostgreSQL, MySQL, SQLite, SQL Server, or MongoDB via Prisma. Peer-depends on `@permx/core >=0.4.0` and `@prisma/client >=5.0.0`.
+- **`createPermX({ prisma, ...config })`** — factory returning a full PermX instance with `authorize`, `getUserPermissions`, `invalidateUser`, and every other core API backed by Prisma queries.
+- **`PrismaDataProvider`** — implements `PermXDataProvider` using the Prisma client's typed delegates. Use directly with `createPermXCore` if you want to wire the core factory yourself.
+- **Reference `schema.prisma`** shipped with the package. 8 models mirror the Mongoose adapter: `PermXModule`, `PermXPermission`, `PermXRole`, `PermXRolePermission`, `PermXRoleInheritance`, `PermXUserRole`, `PermXUserRoleAdditional`, `PermXUserRoleExcluded`.
+- **Idempotent seed helpers** — `syncFromConfig`, `upsertModule`, `upsertPermission`, `upsertRole`, `ensureUserRole`, `setRolePermissions`, `setRoleInheritance`. Safe to run on every app boot.
+- **Cross-DB-portable JSON storage** for `api_mappings` and `ui_mappings` — stored as text-encoded JSON so the same schema works on SQLite, PostgreSQL, MySQL, and SQL Server without `json`-type divergence.
+- **`PrismaClientLike`** structural type — the adapter works with any Prisma client whose generated delegates match the shape PermX calls. Your project's real `PrismaClient` satisfies this automatically.
+- 31 tests against an in-memory Prisma-compatible test harness (data provider, seed helpers, factory end-to-end including cache invalidation).
+
 ## [@permx/core 0.4.0] - 2026-04-17
 
 ### Added

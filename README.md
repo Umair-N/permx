@@ -2,15 +2,19 @@
 
 [![npm version](https://img.shields.io/npm/v/@permx/core.svg?label=%40permx%2Fcore)](https://www.npmjs.com/package/@permx/core)
 [![npm version](https://img.shields.io/npm/v/@permx/react.svg?label=%40permx%2Freact)](https://www.npmjs.com/package/@permx/react)
+[![npm version](https://img.shields.io/npm/v/@permx/prisma.svg?label=%40permx%2Fprisma)](https://www.npmjs.com/package/@permx/prisma)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Zero Dependencies](https://img.shields.io/badge/core_deps-zero-brightgreen.svg)](#entry-points)
 
-Structured RBAC for Node.js and React. Permission keys with meaning, role inheritance that handles diamonds and cycles, UI-aware mappings, multi-tenant support, and a headless React SDK — works with any HTTP framework and any database.
+Structured RBAC for Node.js and React. Permission keys with meaning, role inheritance that handles diamonds and cycles, UI-aware mappings, multi-tenant support, and a headless React SDK — works with any HTTP framework, and any database (MongoDB via Mongoose, PostgreSQL / MySQL / SQLite / SQL Server via Prisma).
 
 ```
-npm install @permx/core          # backend
-npm install @permx/react          # frontend
+npm install @permx/core                        # backend (zero deps)
+npm install @permx/react                       # frontend — React SDK
+npm install @permx/prisma @prisma/client       # Prisma adapter (PostgreSQL, MySQL, SQLite)
+# or:
+npm install @permx/core mongoose               # Mongoose adapter (MongoDB)
 ```
 
 ## The Problem
@@ -350,6 +354,7 @@ The resolver is called per authorization; wrap it with the built-in cache (`cach
 | `@permx/core` | Core types, engine, utilities | **Zero** |
 | `@permx/core/mongoose` | MongoDB adapter + schema factory | `mongoose` |
 | `@permx/core/express` | Express middleware | `express` |
+| `@permx/prisma` | Prisma adapter (PostgreSQL, MySQL, SQLite, SQL Server) | `@prisma/client` (peer) |
 | `@permx/react` | React components, hooks, and zero-dep store | `react` (peer) |
 
 ### `@permx/core` — Core (Zero Dependencies)
@@ -421,6 +426,36 @@ import {
   type PermXModels,
 } from '@permx/core/mongoose';
 ```
+
+### `@permx/prisma` — Prisma Adapter (peer: @prisma/client)
+
+Drop-in adapter for PostgreSQL, MySQL, SQLite, SQL Server, or MongoDB via Prisma. Copy the models from the shipped `schema.prisma`, run `prisma migrate`, and wire it up in 3 lines:
+
+```typescript
+import { PrismaClient } from '@prisma/client';
+import { createPermX, syncFromConfig } from '@permx/prisma';
+
+const prisma = new PrismaClient();
+
+const permx = createPermX({
+  prisma,
+  cache: { ttl: 15_000 },
+  tenancy: { enabled: true },
+  superAdmin: { check: (userId) => userId === 'admin' },
+});
+
+await syncFromConfig(prisma, {
+  modules: [{ name: 'Projects', slug: 'projects' }],
+  permissions: [
+    { moduleSlug: 'projects', name: 'View', key: 'projects.tasks.view.all' },
+  ],
+  roles: [{ name: 'Viewer', slug: 'viewer', permissionKeys: ['projects.tasks.view.all'] }],
+});
+
+await permx.authorize(userId, 'projects.tasks.view.all');
+```
+
+Full exports (`PrismaDataProvider`, `syncFromConfig`, `upsertModule`, `upsertPermission`, `upsertRole`, `ensureUserRole`, `setRolePermissions`, `setRoleInheritance`, `PrismaClientLike`) — see [`packages/prisma/README.md`](packages/prisma/README.md).
 
 ### `@permx/core/express` — Middleware
 

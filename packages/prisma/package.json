@@ -1,0 +1,79 @@
+{
+  "name": "@permx/prisma",
+  "version": "0.1.0",
+  "description": "Prisma adapter for PermX RBAC — works with PostgreSQL, MySQL, SQLite, and any Prisma-supported database",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./schema": "./prisma/schema.prisma"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "prisma/schema.prisma"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "bun tsup",
+    "dev": "bun tsup --watch",
+    "test": "bun vitest run",
+    "test:watch": "bun vitest",
+    "test:coverage": "bun vitest run --coverage",
+    "typecheck": "bun tsc --noEmit",
+    "lint": "bun attw --pack --ignore-rules no-resolution && bun publint",
+    "prepublishOnly": "bun run build"
+  },
+  "peerDependencies": {
+    "@permx/core": ">=0.4.0",
+    "@prisma/client": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@permx/core": "workspace:*",
+    "@prisma/client": "^5.22.0",
+    "prisma": "^5.22.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "@arethetypeswrong/cli": "^0.17.0",
+    "publint": "^0.3.0"
+  },
+  "keywords": [
+    "rbac",
+    "permissions",
+    "access-control",
+    "authorization",
+    "roles",
+    "acl",
+    "permx",
+    "prisma",
+    "postgresql",
+    "mysql",
+    "sqlite",
+    "feature-flags",
+    "multi-tenant",
+    "role-based-access-control",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Umair-N/permx.git",
+    "directory": "packages/prisma"
+  },
+  "homepage": "https://github.com/Umair-N/permx#readme",
+  "bugs": {
+    "url": "https://github.com/Umair-N/permx/issues"
+  }
+}

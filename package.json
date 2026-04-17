@@ -7,14 +7,16 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "bun --filter '@permx/core' build && bun --filter '@permx/react' build",
-    "test": "bun --filter '@permx/core' test && bun --filter '@permx/react' test",
-    "typecheck": "bun --filter '@permx/core' typecheck && bun --filter '@permx/react' typecheck",
-    "lint": "bun --filter '@permx/core' lint && bun --filter '@permx/react' lint",
+    "build": "bun --filter '@permx/core' build && bun --filter '@permx/react' build && bun --filter '@permx/prisma' build",
+    "test": "bun --filter '@permx/core' test && bun --filter '@permx/react' test && bun --filter '@permx/prisma' test",
+    "typecheck": "bun --filter '@permx/core' typecheck && bun --filter '@permx/react' typecheck && bun --filter '@permx/prisma' typecheck",
+    "lint": "bun --filter '@permx/core' lint && bun --filter '@permx/react' lint && bun --filter '@permx/prisma' lint",
     "build:core": "bun --filter '@permx/core' build",
     "build:react": "bun --filter '@permx/react' build",
+    "build:prisma": "bun --filter '@permx/prisma' build",
     "test:core": "bun --filter '@permx/core' test",
-    "test:react": "bun --filter '@permx/react' test"
+    "test:react": "bun --filter '@permx/react' test",
+    "test:prisma": "bun --filter '@permx/prisma' test"
   },
   "devDependencies": {
     "typescript": "^5.7.0"
