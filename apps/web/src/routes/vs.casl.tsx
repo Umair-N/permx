@@ -2,14 +2,30 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { SITE_URL, siteUrl } from '#/lib/site'
 
 const PAGE_URL = siteUrl('vs/casl')
+const VS_INDEX_URL = siteUrl('vs')
 
 const BREADCRUMB_JSON_LD = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'PermX', item: SITE_URL },
-    { '@type': 'ListItem', position: 2, name: 'Comparisons', item: PAGE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Comparisons', item: VS_INDEX_URL },
     { '@type': 'ListItem', position: 3, name: 'PermX vs CASL', item: PAGE_URL },
+  ],
+})
+
+const WEBPAGE_JSON_LD = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'PermX vs CASL — Structured RBAC Alternative for Node.js',
+  url: PAGE_URL,
+  description:
+    'Side-by-side comparison of PermX and CASL: permission model, type safety, UI gates, inheritance, multi-tenancy, and bundle size.',
+  primaryImageOfPage: `${SITE_URL}og.png`,
+  inLanguage: 'en',
+  about: [
+    { '@type': 'SoftwareApplication', name: 'PermX', url: SITE_URL },
+    { '@type': 'SoftwareApplication', name: 'CASL', url: 'https://casl.js.org' },
   ],
 })
 
@@ -33,10 +49,12 @@ export const Route = createFileRoute('/vs/casl')({
         content:
           'Compare PermX and CASL for RBAC in Node.js and React. Structured keys, UI gates, zero deps.',
       },
+      { property: 'og:url', content: PAGE_URL },
     ],
     links: [{ rel: 'canonical', href: PAGE_URL }],
     scripts: [
       { type: 'application/ld+json', children: BREADCRUMB_JSON_LD },
+      { type: 'application/ld+json', children: WEBPAGE_JSON_LD },
     ],
   }),
   component: VsCasl,
@@ -52,7 +70,9 @@ function VsCasl() {
               <Link to="/" className="hover:text-(--ink)">permx</Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li>vs</li>
+            <li>
+              <Link to="/vs" className="hover:text-(--ink)">vs</Link>
+            </li>
             <li aria-hidden="true">/</li>
             <li className="text-(--ink)">casl</li>
           </ol>
@@ -180,8 +200,15 @@ function ComparisonTable({
   rows: Array<{ cap: string; casl: string; permx: string }>
 }) {
   return (
-    <section className="frame rule-h pt-12 pb-12">
-      <div className="overflow-x-auto border border-(--rule-strong)">
+    <section className="frame rule-h pt-12 pb-12" aria-labelledby="comparison-table">
+      <h2 id="comparison-table" className="display-md text-(--ink)">
+        Capability comparison
+      </h2>
+      <p className="mt-3 max-w-[60ch] text-[0.95rem] leading-[1.6] text-(--ink-soft)">
+        Ten dimensions scored head-to-head. Rows favouring PermX are bolded in
+        the right column.
+      </p>
+      <div className="mt-6 overflow-x-auto border border-(--rule-strong)">
         <table className="spec-table min-w-[640px]">
           <thead>
             <tr>

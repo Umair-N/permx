@@ -3,13 +3,14 @@ import CopyButton from '#/components/CopyButton'
 import { SITE_URL, siteUrl } from '#/lib/site'
 
 const DOCS_URL = siteUrl('docs/getting-started')
+const DOCS_INDEX_URL = siteUrl('docs')
 
 const BREADCRUMB_JSON_LD = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'PermX', item: SITE_URL },
-    { '@type': 'ListItem', position: 2, name: 'Docs', item: DOCS_URL },
+    { '@type': 'ListItem', position: 2, name: 'Docs', item: DOCS_INDEX_URL },
     { '@type': 'ListItem', position: 3, name: 'Getting Started', item: DOCS_URL },
   ],
 })
@@ -28,6 +29,33 @@ const HOWTO_JSON_LD = JSON.stringify({
     { '@type': 'HowToStep', position: 4, name: 'Protect routes', text: 'Wrap your Express, Hono, Fastify, or Koa routes with createPermXMiddleware.' },
     { '@type': 'HowToStep', position: 5, name: 'Gate the UI', text: 'Wrap React components with <Can>, <CanField>, and <RouteGuard>.' },
   ],
+})
+
+const TECHARTICLE_JSON_LD = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'Getting Started with PermX — Structured RBAC for Node.js and React',
+  description:
+    'Install, define typed permissions, wire middleware, and gate UI components with PermX — the zero-dependency structured RBAC library.',
+  url: DOCS_URL,
+  mainEntityOfPage: DOCS_URL,
+  proficiencyLevel: 'Beginner',
+  inLanguage: 'en',
+  image: `${SITE_URL}og.png`,
+  datePublished: '2026-04-17',
+  dateModified: '2026-04-18',
+  author: [
+    { '@type': 'Person', name: 'Umair N', url: 'https://github.com/Umair-N' },
+    { '@type': 'Person', name: 'incmak', url: 'https://github.com/incmak' },
+  ],
+  publisher: {
+    '@type': 'Organization',
+    name: 'PermX',
+    url: SITE_URL,
+    logo: { '@type': 'ImageObject', url: `${SITE_URL}logo.svg` },
+  },
+  dependencies: '@permx/core, @permx/react',
+  proficiency: 'Beginner',
 })
 
 export const Route = createFileRoute('/docs/getting-started')({
@@ -51,11 +79,14 @@ export const Route = createFileRoute('/docs/getting-started')({
         content:
           'Step-by-step guide to adding structured RBAC to your Node.js and React app with PermX.',
       },
+      { property: 'og:url', content: DOCS_URL },
+      { property: 'og:type', content: 'article' },
     ],
     links: [{ rel: 'canonical', href: DOCS_URL }],
     scripts: [
       { type: 'application/ld+json', children: BREADCRUMB_JSON_LD },
       { type: 'application/ld+json', children: HOWTO_JSON_LD },
+      { type: 'application/ld+json', children: TECHARTICLE_JSON_LD },
     ],
   }),
   component: GettingStarted,
@@ -73,7 +104,9 @@ function GettingStarted() {
               </Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li>docs</li>
+            <li>
+              <Link to="/docs" className="hover:text-(--ink)">docs</Link>
+            </li>
             <li aria-hidden="true">/</li>
             <li className="text-(--ink)">getting-started</li>
           </ol>

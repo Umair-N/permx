@@ -31,12 +31,14 @@ export default function Footer() {
         <FooterCol
           title="Reference"
           links={[
+            ['Docs', '/docs'],
             ['Getting Started', '/docs/getting-started'],
             ['Anatomy', '#anatomy'],
             ['Three-Layer Model', '#layers'],
-            ['Compare', '#compare'],
+            ['Alternatives', '/vs'],
             ['PermX vs CASL', '/vs/casl'],
             ['PermX vs Casbin', '/vs/casbin'],
+            ['PermX vs Permit.io', '/vs/permit'],
           ]}
         />
         <FooterCol

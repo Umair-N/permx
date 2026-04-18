@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VsIndexRouteImport } from './routes/vs.index'
+import { Route as DocsIndexRouteImport } from './routes/docs.index'
+import { Route as VsPermitRouteImport } from './routes/vs.permit'
 import { Route as VsCaslRouteImport } from './routes/vs.casl'
 import { Route as VsCasbinRouteImport } from './routes/vs.casbin'
 import { Route as DocsGettingStartedRouteImport } from './routes/docs.getting-started'
@@ -17,6 +20,21 @@ import { Route as DocsGettingStartedRouteImport } from './routes/docs.getting-st
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VsIndexRoute = VsIndexRouteImport.update({
+  id: '/vs/',
+  path: '/vs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/docs/',
+  path: '/docs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VsPermitRoute = VsPermitRouteImport.update({
+  id: '/vs/permit',
+  path: '/vs/permit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VsCaslRoute = VsCaslRouteImport.update({
@@ -40,12 +58,18 @@ export interface FileRoutesByFullPath {
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/vs/casbin': typeof VsCasbinRoute
   '/vs/casl': typeof VsCaslRoute
+  '/vs/permit': typeof VsPermitRoute
+  '/docs/': typeof DocsIndexRoute
+  '/vs/': typeof VsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/vs/casbin': typeof VsCasbinRoute
   '/vs/casl': typeof VsCaslRoute
+  '/vs/permit': typeof VsPermitRoute
+  '/docs': typeof DocsIndexRoute
+  '/vs': typeof VsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +77,38 @@ export interface FileRoutesById {
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/vs/casbin': typeof VsCasbinRoute
   '/vs/casl': typeof VsCaslRoute
+  '/vs/permit': typeof VsPermitRoute
+  '/docs/': typeof DocsIndexRoute
+  '/vs/': typeof VsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/docs/getting-started' | '/vs/casbin' | '/vs/casl'
+  fullPaths:
+    | '/'
+    | '/docs/getting-started'
+    | '/vs/casbin'
+    | '/vs/casl'
+    | '/vs/permit'
+    | '/docs/'
+    | '/vs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/docs/getting-started' | '/vs/casbin' | '/vs/casl'
-  id: '__root__' | '/' | '/docs/getting-started' | '/vs/casbin' | '/vs/casl'
+  to:
+    | '/'
+    | '/docs/getting-started'
+    | '/vs/casbin'
+    | '/vs/casl'
+    | '/vs/permit'
+    | '/docs'
+    | '/vs'
+  id:
+    | '__root__'
+    | '/'
+    | '/docs/getting-started'
+    | '/vs/casbin'
+    | '/vs/casl'
+    | '/vs/permit'
+    | '/docs/'
+    | '/vs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +116,9 @@ export interface RootRouteChildren {
   DocsGettingStartedRoute: typeof DocsGettingStartedRoute
   VsCasbinRoute: typeof VsCasbinRoute
   VsCaslRoute: typeof VsCaslRoute
+  VsPermitRoute: typeof VsPermitRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+  VsIndexRoute: typeof VsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -76,6 +128,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vs/': {
+      id: '/vs/'
+      path: '/vs'
+      fullPath: '/vs/'
+      preLoaderRoute: typeof VsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/': {
+      id: '/docs/'
+      path: '/docs'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vs/permit': {
+      id: '/vs/permit'
+      path: '/vs/permit'
+      fullPath: '/vs/permit'
+      preLoaderRoute: typeof VsPermitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vs/casl': {
@@ -107,6 +180,9 @@ const rootRouteChildren: RootRouteChildren = {
   DocsGettingStartedRoute: DocsGettingStartedRoute,
   VsCasbinRoute: VsCasbinRoute,
   VsCaslRoute: VsCaslRoute,
+  VsPermitRoute: VsPermitRoute,
+  DocsIndexRoute: DocsIndexRoute,
+  VsIndexRoute: VsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

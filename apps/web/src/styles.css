@@ -425,10 +425,15 @@ kbd {
   overflow-x: auto;
   border: 1px solid var(--rule-strong);
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .code-chrome {
   border: 1px solid var(--rule-strong);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .code-chrome__bar {
@@ -511,49 +516,51 @@ kbd {
 
 /* --- buttons --- */
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.85rem 1.2rem;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease;
-}
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
 
-.btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--cobalt);
-}
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--cobalt);
+  }
 
-.btn--ghost {
-  background: transparent;
-  color: var(--ink);
-}
+  .btn--ghost {
+    background: transparent;
+    color: var(--ink);
+  }
 
-.btn--ghost:hover {
-  box-shadow: 4px 4px 0 var(--shadow-stamp);
-}
+  .btn--ghost:hover {
+    box-shadow: 4px 4px 0 var(--shadow-stamp);
+  }
 
-.btn--cobalt {
-  background: var(--cobalt);
-  border-color: var(--cobalt);
-  color: #fff;
-}
+  .btn--cobalt {
+    background: var(--cobalt);
+    border-color: var(--cobalt);
+    color: #fff;
+  }
 
-:root[data-theme="dark"] .btn--cobalt {
-  color: var(--paper);
-}
+  :root[data-theme="dark"] .btn--cobalt {
+    color: var(--paper);
+  }
 
-.btn--cobalt:hover {
-  box-shadow: 4px 4px 0 var(--shadow-stamp);
+  .btn--cobalt:hover {
+    box-shadow: 4px 4px 0 var(--shadow-stamp);
+  }
 }
 
 /* --- node boxes for role diagram --- */
@@ -1032,10 +1039,50 @@ kbd {
 .mobile-nav {
   position: fixed;
   inset: 0;
-  background: var(--paper);
-  z-index: 60;
-  padding: 5rem 1.75rem 3rem;
+  z-index: 40;
+  padding: 6rem 1.75rem 3rem;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+
+  /* liquid-glass material */
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--paper) 92%, transparent) 0%,
+      color-mix(in oklab, var(--paper-deep) 94%, transparent) 100%
+    );
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, white 55%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, var(--ink) 8%, transparent),
+    0 24px 64px -12px color-mix(in oklab, var(--ink) 32%, transparent);
+}
+
+:root[data-theme="dark"] .mobile-nav {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--paper) 88%, transparent) 0%,
+      color-mix(in oklab, var(--paper-deep) 92%, transparent) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--cobalt) 20%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, var(--ink) 14%, transparent),
+    0 24px 64px -12px rgba(0, 0, 0, 0.55);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .mobile-nav { background: var(--paper); }
+}
+
+.mobile-nav a {
+  transition: color 180ms ease;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a:focus-visible {
+  color: var(--cobalt);
 }

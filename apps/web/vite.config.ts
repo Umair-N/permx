@@ -20,9 +20,12 @@ const config = defineConfig({
       },
       pages: [
         { path: '/' },
+        { path: '/docs' },
         { path: '/docs/getting-started' },
+        { path: '/vs' },
         { path: '/vs/casl' },
         { path: '/vs/casbin' },
+        { path: '/vs/permit' },
       ],
       sitemap: {
         enabled: false,

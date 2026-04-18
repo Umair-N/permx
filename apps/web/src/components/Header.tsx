@@ -29,6 +29,7 @@ export default function Header() {
   }, [open])
 
   return (
+    <>
     <header className="topbar sticky top-0 z-50">
       <div className="frame flex items-center gap-8 py-4">
         <Link
@@ -45,7 +46,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-7 md:flex">
+        <nav className="ml-auto hidden items-center gap-7 lg:flex">
           {NAV_ITEMS.map(([label, href]) => {
             const id = href.slice(1)
             const isActive = active === id
@@ -59,8 +60,11 @@ export default function Header() {
               </a>
             )
           })}
-          <Link to="/docs/getting-started" className="nav-link">
+          <Link to="/docs" className="nav-link">
             Docs
+          </Link>
+          <Link to="/vs" className="nav-link">
+            Alternatives
           </Link>
           <a
             href="https://github.com/Umair-N/permx"
@@ -72,12 +76,12 @@ export default function Header() {
           </a>
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 md:ml-0">
+        <div className="ml-auto flex items-center gap-3 lg:ml-0">
           <ThemeToggle />
 
           <a
             href="#install"
-            className="btn btn--cobalt hidden md:inline-flex"
+            className="btn btn--cobalt hidden lg:inline-flex"
           >
             <span aria-hidden>↓</span>
             install
@@ -85,7 +89,7 @@ export default function Header() {
 
           <button
             type="button"
-            className="md:hidden font-mono text-[0.7rem] uppercase tracking-[0.14em] border border-(--ink) px-3 py-2"
+            className="lg:hidden font-mono text-[0.7rem] uppercase tracking-[0.14em] border border-(--ink) px-3 py-2"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
@@ -94,9 +98,10 @@ export default function Header() {
           </button>
         </div>
       </div>
+    </header>
 
-      {open && (
-        <div className="mobile-nav md:hidden">
+    {open && (
+        <div className="mobile-nav lg:hidden">
           {NAV_ITEMS.map(([label, href]) => (
             <a
               key={href}
@@ -108,11 +113,18 @@ export default function Header() {
             </a>
           ))}
           <Link
-            to="/docs/getting-started"
+            to="/docs"
             onClick={() => setOpen(false)}
             className="font-display text-[2.25rem] leading-none text-(--ink)"
           >
             Docs
+          </Link>
+          <Link
+            to="/vs"
+            onClick={() => setOpen(false)}
+            className="font-display text-[2.25rem] leading-none text-(--ink)"
+          >
+            Alternatives
           </Link>
           <a
             href="https://github.com/Umair-N/permx"
@@ -133,7 +145,7 @@ export default function Header() {
           </a>
         </div>
       )}
-    </header>
+    </>
   )
 }
 

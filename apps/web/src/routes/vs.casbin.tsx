@@ -2,14 +2,30 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { SITE_URL, siteUrl } from '#/lib/site'
 
 const PAGE_URL = siteUrl('vs/casbin')
+const VS_INDEX_URL = siteUrl('vs')
 
 const BREADCRUMB_JSON_LD = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'PermX', item: SITE_URL },
-    { '@type': 'ListItem', position: 2, name: 'Comparisons', item: PAGE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Comparisons', item: VS_INDEX_URL },
     { '@type': 'ListItem', position: 3, name: 'PermX vs Casbin', item: PAGE_URL },
+  ],
+})
+
+const WEBPAGE_JSON_LD = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'PermX vs Casbin — Lightweight RBAC Alternative for Node.js',
+  url: PAGE_URL,
+  description:
+    'Side-by-side comparison of PermX and Casbin: authorization model, configuration, type safety, React SDK, role inheritance, and dependencies.',
+  primaryImageOfPage: `${SITE_URL}og.png`,
+  inLanguage: 'en',
+  about: [
+    { '@type': 'SoftwareApplication', name: 'PermX', url: SITE_URL },
+    { '@type': 'SoftwareApplication', name: 'Casbin', url: 'https://casbin.org' },
   ],
 })
 
@@ -34,10 +50,12 @@ export const Route = createFileRoute('/vs/casbin')({
         content:
           'Compare PermX and Casbin for access control in Node.js. Structured keys, React SDK, zero deps.',
       },
+      { property: 'og:url', content: PAGE_URL },
     ],
     links: [{ rel: 'canonical', href: PAGE_URL }],
     scripts: [
       { type: 'application/ld+json', children: BREADCRUMB_JSON_LD },
+      { type: 'application/ld+json', children: WEBPAGE_JSON_LD },
     ],
   }),
   component: VsCasbin,
@@ -53,7 +71,9 @@ function VsCasbin() {
               <Link to="/" className="hover:text-(--ink)">permx</Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li>vs</li>
+            <li>
+              <Link to="/vs" className="hover:text-(--ink)">vs</Link>
+            </li>
             <li aria-hidden="true">/</li>
             <li className="text-(--ink)">casbin</li>
           </ol>
@@ -182,8 +202,15 @@ function ComparisonTable({
   rows: Array<{ cap: string; casbin: string; permx: string }>
 }) {
   return (
-    <section className="frame rule-h pt-12 pb-12">
-      <div className="overflow-x-auto border border-(--rule-strong)">
+    <section className="frame rule-h pt-12 pb-12" aria-labelledby="comparison-table">
+      <h2 id="comparison-table" className="display-md text-(--ink)">
+        Capability comparison
+      </h2>
+      <p className="mt-3 max-w-[60ch] text-[0.95rem] leading-[1.6] text-(--ink-soft)">
+        Ten dimensions scored head-to-head. Rows favouring PermX are bolded in
+        the right column.
+      </p>
+      <div className="mt-6 overflow-x-auto border border-(--rule-strong)">
         <table className="spec-table min-w-[640px]">
           <thead>
             <tr>

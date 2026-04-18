@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import CopyButton from '#/components/CopyButton'
 import { useCountUp, useNpmPackage, useReveal, type NpmInfo } from '#/lib/hooks'
@@ -585,7 +585,7 @@ function BeforeAfter() {
       </div>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2">
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-(--granite)">
             BEFORE · flat-string rbac
           </p>
@@ -615,7 +615,7 @@ function BeforeAfter() {
             </div>
           </div>
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-(--granite)">
             AFTER · permx structured keys
           </p>
@@ -992,7 +992,7 @@ function CodePanel({
   children: React.ReactNode
 }) {
   return (
-    <div>
+    <div className="min-w-0">
       <p className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-(--granite)">
         {label}
       </p>
@@ -1091,9 +1091,30 @@ function Compare() {
           <thead>
             <tr>
               <th>Capability</th>
-              <th>CASL</th>
-              <th>Casbin</th>
-              <th>Permit.io</th>
+              <th>
+                <Link
+                  to="/vs/casl"
+                  className="text-inherit underline decoration-(--rule) underline-offset-4 hover:decoration-(--ink)"
+                >
+                  CASL
+                </Link>
+              </th>
+              <th>
+                <Link
+                  to="/vs/casbin"
+                  className="text-inherit underline decoration-(--rule) underline-offset-4 hover:decoration-(--ink)"
+                >
+                  Casbin
+                </Link>
+              </th>
+              <th>
+                <Link
+                  to="/vs/permit"
+                  className="text-inherit underline decoration-(--rule) underline-offset-4 hover:decoration-(--ink)"
+                >
+                  Permit.io
+                </Link>
+              </th>
               <th>PermX</th>
             </tr>
           </thead>

@@ -1,9 +1,9 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import { Suspense, lazy } from 'react'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
-import { BASE_PATH, SITE_URL } from '../lib/site'
+import { BASE_PATH, SITE_ORIGIN, SITE_URL } from '../lib/site'
+import { PERMX_CORE_VERSION } from '../lib/version'
 
 import appCss from '../styles.css?url'
 
@@ -13,6 +13,8 @@ const SITE_TITLE = 'PermX — Structured RBAC for Node.js and React'
 const SITE_DESC =
   'Permission keys with meaning, role inheritance that handles diamonds and cycles, UI-aware mappings, multi-tenant, framework-agnostic. Zero-dep core.'
 const OG_IMAGE = `${SITE_URL}og.png`
+const LOGO_URL = `${SITE_URL}logo.svg`
+const GH_REPO = 'https://github.com/Umair-N/permx'
 
 const JSON_LD_APP = JSON.stringify({
   '@context': 'https://schema.org',
@@ -23,15 +25,40 @@ const JSON_LD_APP = JSON.stringify({
   description: SITE_DESC,
   url: SITE_URL,
   image: OG_IMAGE,
-  softwareVersion: '0.4.0',
+  softwareVersion: PERMX_CORE_VERSION,
   programmingLanguage: 'TypeScript',
   author: [
     { '@type': 'Person', name: 'Umair N', url: 'https://github.com/Umair-N' },
     { '@type': 'Person', name: 'incmak', url: 'https://github.com/incmak' },
   ],
-  codeRepository: 'https://github.com/Umair-N/permx',
+  codeRepository: GH_REPO,
   license: 'https://opensource.org/licenses/MIT',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+})
+
+const JSON_LD_ORG = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'PermX',
+  url: SITE_URL,
+  logo: LOGO_URL,
+  description:
+    'Open-source structured RBAC library for Node.js and React. Typed permission keys, role inheritance, multi-tenant, zero runtime dependencies.',
+  sameAs: [
+    GH_REPO,
+    'https://www.npmjs.com/package/@permx/core',
+    'https://www.npmjs.com/package/@permx/react',
+  ],
+})
+
+const JSON_LD_WEBSITE = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'PermX',
+  url: SITE_URL,
+  description: SITE_DESC,
+  publisher: { '@type': 'Organization', name: 'PermX', url: SITE_ORIGIN },
+  inLanguage: 'en',
 })
 
 const JSON_LD_FAQ = JSON.stringify({
@@ -149,12 +176,37 @@ export const Route = createRootRoute({
     ],
     scripts: [
       { children: THEME_INIT },
+      { type: 'application/ld+json', children: JSON_LD_ORG },
+      { type: 'application/ld+json', children: JSON_LD_WEBSITE },
       { type: 'application/ld+json', children: JSON_LD_APP },
       { type: 'application/ld+json', children: JSON_LD_FAQ },
     ],
   }),
   shellComponent: RootDocument,
 })
+
+const DevtoolsPanel = import.meta.env.DEV
+  ? lazy(async () => {
+      const [{ TanStackDevtools }, { TanStackRouterDevtoolsPanel }] =
+        await Promise.all([
+          import('@tanstack/react-devtools'),
+          import('@tanstack/react-router-devtools'),
+        ])
+      return {
+        default: () => (
+          <TanStackDevtools
+            config={{ position: 'bottom-right' }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        ),
+      }
+    })
+  : null
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -169,15 +221,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Header />
         <main id="main">{children}</main>
         <Footer />
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        {DevtoolsPanel && (
+          <Suspense fallback={null}>
+            <DevtoolsPanel />
+          </Suspense>
+        )}
         <Scripts />
       </body>
     </html>
