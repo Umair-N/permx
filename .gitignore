@@ -13,3 +13,4 @@ apps/*/.vinxi/
 apps/*/.tanstack/
 apps/*/.vercel/
 apps/*/.netlify/
+.wrangler-dryrun/

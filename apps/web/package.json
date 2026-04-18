@@ -7,11 +7,15 @@
   },
   "scripts": {
     "dev": "vite dev --port 3000",
+    "prebuild": "node scripts/gen-seo-assets.mjs",
     "build": "vite build",
     "preview": "vite preview",
+    "deploy": "bun run build && wrangler deploy",
+    "cf-typegen": "wrangler types",
     "test": "vitest run",
     "typecheck": "tsc -p . --noEmit",
-    "favicon": "node scripts/gen-favicon.mjs"
+    "favicon": "node scripts/gen-favicon.mjs",
+    "seo": "node scripts/gen-seo-assets.mjs"
   },
   "dependencies": {
     "@permx/core": "workspace:*",
@@ -29,6 +33,7 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.32.3",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
@@ -42,6 +47,7 @@
     "sharp": "^0.34.5",
     "typescript": "^5.7.2",
     "vite": "^8.0.0",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "wrangler": "^4.83.0"
   }
 }

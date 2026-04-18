@@ -2,14 +2,20 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import CopyButton from '#/components/CopyButton'
 import { useCountUp, useNpmPackage, useReveal, type NpmInfo } from '#/lib/hooks'
+import { SITE_URL } from '#/lib/site'
 
-export const Route = createFileRoute('/')({ component: Landing })
+export const Route = createFileRoute('/')({
+  head: () => ({
+    links: [{ rel: 'canonical', href: SITE_URL }],
+  }),
+  component: Landing,
+})
 
 const REPO = 'https://github.com/Umair-N/permx'
 
 function Landing() {
   return (
-    <main>
+    <>
       <Ticker />
       <Hero />
       <Manifesto />
@@ -23,7 +29,7 @@ function Landing() {
       <FAQ />
       <Contributors />
       <Install />
-    </main>
+    </>
   )
 }
 

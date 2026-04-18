@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router'
+
 const REPO = 'https://github.com/Umair-N/permx'
 
 export default function Footer() {
@@ -29,11 +31,12 @@ export default function Footer() {
         <FooterCol
           title="Reference"
           links={[
+            ['Getting Started', '/docs/getting-started'],
             ['Anatomy', '#anatomy'],
             ['Three-Layer Model', '#layers'],
-            ['Inheritance', '#inheritance'],
             ['Compare', '#compare'],
-            ['FAQ', '#faq'],
+            ['PermX vs CASL', '/vs/casl'],
+            ['PermX vs Casbin', '/vs/casbin'],
           ]}
         />
         <FooterCol
@@ -73,16 +76,25 @@ function FooterCol({ title, links }: FooterColProps) {
       <ul className="mt-3 space-y-2">
         {links.map(([label, href]) => {
           const external = href.startsWith('http')
+          const hash = href.startsWith('#')
+          const linkClass =
+            'font-mono text-[0.8rem] text-(--ink) underline decoration-(--rule) underline-offset-4 hover:decoration-(--ink)'
           return (
             <li key={label}>
-              <a
-                href={href}
-                target={external ? '_blank' : undefined}
-                rel={external ? 'noreferrer' : undefined}
-                className="font-mono text-[0.8rem] text-(--ink) underline decoration-(--rule) underline-offset-4 hover:decoration-(--ink)"
-              >
-                {label}
-              </a>
+              {external || hash ? (
+                <a
+                  href={href}
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noreferrer' : undefined}
+                  className={linkClass}
+                >
+                  {label}
+                </a>
+              ) : (
+                <Link to={href} className={linkClass}>
+                  {label}
+                </Link>
+              )}
             </li>
           )
         })}

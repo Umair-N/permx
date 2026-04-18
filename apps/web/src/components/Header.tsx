@@ -59,6 +59,9 @@ export default function Header() {
               </a>
             )
           })}
+          <Link to="/docs/getting-started" className="nav-link">
+            Docs
+          </Link>
           <a
             href="https://github.com/Umair-N/permx"
             target="_blank"
@@ -104,6 +107,13 @@ export default function Header() {
               {label}
             </a>
           ))}
+          <Link
+            to="/docs/getting-started"
+            onClick={() => setOpen(false)}
+            className="font-display text-[2.25rem] leading-none text-(--ink)"
+          >
+            Docs
+          </Link>
           <a
             href="https://github.com/Umair-N/permx"
             target="_blank"
